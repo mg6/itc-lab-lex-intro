@@ -12,6 +12,12 @@ int fbuf_idx = 0;
 char buf[100];
 char *s;
 
+int count_include = 0;
+
+void report_counts() {
+  fprintf(stderr, "Counts: includes=%d\n", count_include);
+}
+
 %}
 
 
@@ -27,6 +33,7 @@ char *s;
 .       ECHO;
 <<EOF>> {
           if (fbuf_idx == 0) {
+            report_counts();
             yyterminate();
           }
           else {
@@ -46,6 +53,7 @@ begin\{   BEGIN(CMD_ENVIRON);
 
 \} {
         *s = 0;
+        ++count_include;
         BEGIN(INITIAL);
         fbuf_stack[fbuf_idx++] = YY_CURRENT_BUFFER;
         yyin = fopen(buf, "r");
