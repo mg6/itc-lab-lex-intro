@@ -15,7 +15,7 @@ char *s;
 int count_include = 0;
 
 void report_counts() {
-  fprintf(stderr, "Counts: includes=%d\n", count_include);
+  fprintf(stderr, "Counts: files=%d\n", count_include + 1);
 }
 
 %}
