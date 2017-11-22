@@ -27,9 +27,8 @@ while read path_in; do
         cmd2="$(cat "$path_check")"
         (
           cd "$data_dir" || exit 2
-          # compare stdout
-          diff -u <(bash -c "$cmd1" 2>/dev/null) <(bash -c "$cmd2" 2>/dev/null)
-          # compare stderr
+          # compare stdout, then stderr
+          diff -u <(bash -c "$cmd1" 2>/dev/null) <(bash -c "$cmd2" 2>/dev/null) &&
           diff -u <(bash -c "$cmd1" 2>&1 1>/dev/null) <(bash -c "$cmd2" 2>&1 1>/dev/null)
         ) && ((++okay)) || res=$?
         trace "  {$res} Ran check=$check type=diff_command"
