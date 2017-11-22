@@ -5,6 +5,7 @@
 %{
 
 #include <stdlib.h> 
+#include <string.h>
 
 YY_BUFFER_STATE fbuf_stack[10];
 int fbuf_idx = 0;
@@ -73,9 +74,23 @@ begin\{   BEGIN(CMD_ENVIRON);
 %%
 
 
-int main()
+int main(int argc, char **argv)
 {
-  yyin = fopen("p.tex", "r");
+  ++argv, --argc;
+
+  if (argc > 0) {
+    if (strcmp(argv[0], "-") == 0) {
+      yyin = stdin;
+    }
+    else {
+      yyin = fopen(argv[0], "r");
+    }
+  }
+  else {
+    // open default file
+    yyin = fopen("p.tex", "r");
+  }
+
   yylex();
   return 0;
 }
