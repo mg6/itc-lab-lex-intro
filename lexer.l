@@ -17,6 +17,7 @@ char *s;
 
 %x CMD_SELECT
 %x CMD_INCLUDE
+%x CMD_ENVIRON
 
 
 %%
@@ -36,6 +37,7 @@ char *s;
 <CMD_SELECT>{
 
 include\{ BEGIN(CMD_INCLUDE); s = buf;
+begin\{   BEGIN(CMD_ENVIRON);
 
 }
 
@@ -49,6 +51,13 @@ include\{ BEGIN(CMD_INCLUDE); s = buf;
         yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 }
 .       *s++ = yytext[0];
+
+}
+
+<CMD_ENVIRON>{
+
+\\end\{[^}]+\}  BEGIN(INITIAL);
+.|\n    ;
 
 }
 
