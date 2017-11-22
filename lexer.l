@@ -22,6 +22,7 @@ char *s;
 
 %%
 
+%.*     ;
 \\      BEGIN(CMD_SELECT);
 .       ECHO;
 <<EOF>> {
