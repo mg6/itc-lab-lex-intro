@@ -39,7 +39,7 @@ while read path_in; do
         res=0
         (
           cd "$data_dir" || exit 2
-          "$exe" "../$path_in" 2>&1 1>/dev/null | grep -f "../$path_check"
+          "$exe" "../$path_in" 2>&1 1>/dev/null | grep -qf "../$path_check"
         ) && ((++okay)) || res=$?
         trace "  {$res} Ran check=$check type=stderr_match"
         ((++run))
