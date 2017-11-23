@@ -35,7 +35,7 @@ NL      (\r?\n)
 %.*     ;
 
 {NL}+   ; /* discard preceding newlines */
-.       {
+[^\\]   {
           if (count_paragraph < 1) ++count_paragraph;
           REJECT;
         }
