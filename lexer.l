@@ -36,7 +36,8 @@ void report_counts() {
 
 NL        (\r?\n)
 WORD      [a-zA-Z0-9]+
-SENTENCE  [^\.\r\n]+
+SENTENCE  [^.\r\n]+
+FOOTNOTE  \.\[[^]]+\]
 FULLSTOP  [.\r\n]+
 
 %%
@@ -60,6 +61,10 @@ FULLSTOP  [.\r\n]+
             sentence_started = 1;
             ++count_sentence;
           }
+          REJECT;
+        }
+{FOOTNOTE} {
+          --count_sentence;
           REJECT;
         }
 {FULLSTOP} {
