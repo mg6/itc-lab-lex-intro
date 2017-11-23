@@ -74,7 +74,7 @@ FULLSTOP  [.\r\n]+
 {WORD}  {
           ++count_word;
         }
-.       ECHO;
+.       ;
 
 <<EOF>> {
           if (fbuf_idx == 0) {
