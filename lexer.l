@@ -15,13 +15,16 @@ char *s;
 
 int count_include = 0
   , count_paragraph = 0
-  , count_word = 0;
+  , count_word = 0
+  , count_sentence = 0
+  , sentence_started = 0;
 
 void report_counts() {
-  fprintf(stderr, "Counts: files=%d paragraphs=%d words=%d\n",
+  fprintf(stderr, "Counts: files=%d paragraphs=%d words=%d sentences=%d\n",
     count_include + 1,
     count_paragraph,
-    count_word);
+    count_word,
+    count_sentence);
 }
 
 %}
@@ -31,8 +34,10 @@ void report_counts() {
 %x CMD_INCLUDE
 %x CMD_ENVIRON
 
-NL      (\r?\n)
-WORD    [a-zA-Z0-9]+
+NL        (\r?\n)
+WORD      [a-zA-Z0-9]+
+SENTENCE  [^\.\r\n]+
+FULLSTOP  [.\r\n]+
 
 %%
 
@@ -49,10 +54,23 @@ WORD    [a-zA-Z0-9]+
         }
 
 \\      BEGIN(CMD_SELECT);
+
+{SENTENCE} {
+          if (!sentence_started) {
+            sentence_started = 1;
+            ++count_sentence;
+          }
+          REJECT;
+        }
+{FULLSTOP} {
+          sentence_started = 0;
+          REJECT;
+        }
 {WORD}  {
           ++count_word;
         }
 .       ECHO;
+
 <<EOF>> {
           if (fbuf_idx == 0) {
             report_counts();
