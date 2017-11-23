@@ -13,10 +13,12 @@ int fbuf_idx = 0;
 char buf[100];
 char *s;
 
-int count_include = 0;
+int count_include = 0
+  , count_paragraph = 0;
 
 void report_counts() {
-  fprintf(stderr, "Counts: files=%d\n", count_include + 1);
+  fprintf(stderr, "Counts: files=%d paragraphs=%d\n", count_include + 1,
+    count_paragraph);
 }
 
 %}
@@ -26,10 +28,22 @@ void report_counts() {
 %x CMD_INCLUDE
 %x CMD_ENVIRON
 
+NL      (\r?\n)
 
 %%
 
 %.*     ;
+
+{NL}+   ; /* discard preceding newlines */
+.       {
+          if (count_paragraph < 1) ++count_paragraph;
+          REJECT;
+        }
+{NL}{2,}[^\\] {
+          ++count_paragraph;
+          REJECT;
+        }
+
 \\      BEGIN(CMD_SELECT);
 .       ECHO;
 <<EOF>> {
