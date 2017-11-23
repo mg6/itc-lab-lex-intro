@@ -14,11 +14,14 @@ char buf[100];
 char *s;
 
 int count_include = 0
-  , count_paragraph = 0;
+  , count_paragraph = 0
+  , count_word = 0;
 
 void report_counts() {
-  fprintf(stderr, "Counts: files=%d paragraphs=%d\n", count_include + 1,
-    count_paragraph);
+  fprintf(stderr, "Counts: files=%d paragraphs=%d words=%d\n",
+    count_include + 1,
+    count_paragraph,
+    count_word);
 }
 
 %}
@@ -29,6 +32,7 @@ void report_counts() {
 %x CMD_ENVIRON
 
 NL      (\r?\n)
+WORD    [a-zA-Z0-9]+
 
 %%
 
@@ -45,6 +49,9 @@ NL      (\r?\n)
         }
 
 \\      BEGIN(CMD_SELECT);
+{WORD}  {
+          ++count_word;
+        }
 .       ECHO;
 <<EOF>> {
           if (fbuf_idx == 0) {
